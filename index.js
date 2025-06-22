@@ -12,13 +12,19 @@
         {
           updateViaCache: "none",
         }
-        );
-        sWorker = swRegistration.installing || swRegistration.waiting || swRegistration.active;
-        navigator.serviceWorker.addEventListener("controllerchange", onControllerChange);
+      );
+      sWorker =
+        swRegistration.installing ||
+        swRegistration.waiting ||
+        swRegistration.active;
+      navigator.serviceWorker.addEventListener(
+        "controllerchange",
+        onControllerChange
+      );
     }
-    }
-    
-    function onControllerChange() {
-        sWorker = navigator.serviceWorker.controller;
-    }
+  }
+
+  function onControllerChange() {
+    sWorker = navigator.serviceWorker.controller;
+  }
 })();

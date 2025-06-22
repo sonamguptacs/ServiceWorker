@@ -11,6 +11,16 @@ function onInstall(event) {
 }
 
 function onActivate(event) {
-  console.log("Service Worker: Activated");
-  // event.waitUntil(self.clients.claim());
+  event.waitUntil(handleActivation());
 }
+
+async function handleActivation() {
+  await clients.claim();
+  console.log("Service Worker: Activated");
+}
+
+function main() {
+  console.log("Service Worker: Main function running");
+}
+
+main();
