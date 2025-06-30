@@ -1,26 +1,50 @@
 "use Strict";
 
-const version = "v1";
+const version = "v5";
 
 self.addEventListener("install", onInstall);
 self.addEventListener("activate", onActivate);
+self.addEventListener("message", onMessage);
 
-function onInstall(event) {
-  console.log("Service Worker: Installed");
+async function onInstall() {
+  await sendMessage({ message: "Service Worker installed", version });
   self.skipWaiting();
 }
 
-function onActivate(event) {
+async function onActivate(event) {
   event.waitUntil(handleActivation());
 }
 
 async function handleActivation() {
   await clients.claim();
-  console.log("Service Worker: Activated");
+  await sendMessage({ message: "Service Worker activated", version });
 }
 
-function main() {
-  console.log("Service Worker: Main function running");
+async function main() {
+  await sendMessage({ message: "Main function running", version });
+  await sendMessage({ requestedUpdate: true });
+}
+
+async function sendMessage(message) {
+  const clientsList = await clients.matchAll({ includeUncontrolled: true });
+  return Promise.all(
+    clientsList.map(function (client) {
+      const channel = new MessageChannel();
+      channel.port1.onmessage = onMessage;
+      return client.postMessage(message, [channel.port2]);
+    })
+  );
+}
+
+function onMessage({ data }) {
+  if ({ data }) {
+    sendMessage({
+      message:
+        "Service Worker received online status update as " +
+        data.status.isOnLine,
+      version,
+    });
+  }
 }
 
 main();
